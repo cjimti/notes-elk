@@ -1,13 +1,13 @@
 # ELK Notes
 
 Notee on setup for local development of systems utilizing [Elastic
-Search][3], [Logstash][4], [Kilbana][5]. We will also be using
+Search](3), [Logstash](4), [Kilbana](5). We will also be using
 [Packetbeat][6] for gathering network data usefull for testing our ELK
 stack.
 
 I have been developing software on a Mac for over 15 years now and have
 been though quite a few dev stacks, from the likes of MAMP and
-[Vagrant][1]/[Virtualbox][2] to hybrid development and production
+[Vagrant](1)/[Virtualbox](2) to hybrid development and production
 environments, VPNs and network mounted file systems. Thease days Docker
 has been a fantastically elegant solution for local development.
 Containers have allow me to replicate fairly sophisticated production
