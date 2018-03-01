@@ -1,15 +1,17 @@
 # ELK Notes
 
-Notee on setup for local development of systems utilizing Elastic
-Search, Logstash, Kilbana.
+Notee on setup for local development of systems utilizing [Elastic
+Search][3], [Logstash][4], [Kilbana][5]. We will also be using
+[Packetbeat][6] for gathering network data usefull for testing our ELK
+stack.
 
-I have been developing software on a Mac for over 15 years now and
-have been though quiate a few dev stacks, from the likes of MAMP and
-Vagrant/Virtualbox to hybrid development and production environments,
-VPNs and network mounted file systems. Thease days Docker has been a
-fantastically elegant solution for local development. Containers
-have allow me to replicate fairly sophisticated production systems
-quickly on my local Mac.
+I have been developing software on a Mac for over 15 years now and have
+been though quite a few dev stacks, from the likes of MAMP and
+[Vagrant][1]/[Virtualbox][2] to hybrid development and production
+environments, VPNs and network mounted file systems. Thease days Docker
+has been a fantastically elegant solution for local development.
+Containers have allow me to replicate fairly sophisticated production
+systems quickly on my local Mac.
 
 
 ## Getting Started with ELK
@@ -26,8 +28,8 @@ elastic.io](https://www.docker.elastic.co/).
 
 #### Network
 
-Create a Docker network so we can use container names to access
-local services across containers.
+Create a Docker network so we can use container names to access local
+services across containers.
 
 ```bash
 docker network create elknet
@@ -110,9 +112,9 @@ The Logstash data flow:
 `Source -> Input -> Filter -> Output -> Destination`
 
 The default Logstash configuration takes input from
-[Beats](https://www.elastic.co/products/beats). And outputs to
-standard out. The following is the configuration file shipped with
-the OSS 6.2.2 container.
+[Beats](https://www.elastic.co/products/beats). And outputs to standard
+out. The following is the configuration file shipped with the OSS 6.2.2
+container.
 
 ```bash
 input {
@@ -140,10 +142,12 @@ docker run -d --name=logstash \
     docker.elastic.co/logstash/logstash-oss:6.2.2
 ```
 
-We will run [Packetbeat](https://www.elastic.co/downloads/beats/packetbeat)
-on our local workstation to test Lostash.
+We will run
+[Packetbeat](https://www.elastic.co/downloads/beats/packetbeat) on our
+local workstation to test Lostash.
 
-Download and install [Packetbeat 6.2.2 for Mac](https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-6.2.2-darwin-x86_64.tar.gz).
+Download and install
+[Packetbeat 6.2.2 for Mac](https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-6.2.2-darwin-x86_64.tar.gz).
 
 ```bash
 wget https://artifacts.elastic.co/downloads/beats/packetbeat/packetbeat-6.2.2-darwin-x86_64.tar.gz
@@ -164,8 +168,9 @@ sudo ./packetbeat -e -c packetbeat.yml
 ```
 
 If you fired up Packetbeat right now it would begin sending data to our
-Elasticsearch running on localhost:9200. However we want to use it to test
-our new Logstash container. Make the following change to configuration.
+Elasticsearch running on localhost:9200. However we want to use it to
+test our new Logstash container. Make the following change to
+configuration.
 
 Open **packetbeat.yml** in the packetbeat-6.2.2-darwin-x86_64 folder in
 a text editor.
@@ -205,9 +210,8 @@ output.elasticsearch:
 ```
 
 Comment out `output.elasticsearch:` and `hosts: ["localhost:9200"]` in
-the Elasticsearch output section and uncomment
-`#output.logstash:` and `#hosts: ["localhost:5044"]` in the Logstash
-output section.
+the Elasticsearch output section and uncomment `#output.logstash:` and
+`#hosts: ["localhost:5044"]` in the Logstash output section.
 
 Run packetbeat on your local Mac with the new configuration.
 
@@ -228,7 +232,8 @@ output {
 }
 ```
 
-Some stdout (standard out) examples of Packetbeat data should look like: this:
+Some stdout (standard out) examples of Packetbeat data should look like:
+this:
 
 ```plain
 {
@@ -263,18 +268,24 @@ Some stdout (standard out) examples of Packetbeat data should look like: this:
 ```
 
 
-Checkout the [command line](https://www.elastic.co/guide/en/beats/packetbeat/current/command-line-options.html) and [configuration](https://www.elastic.co/guide/en/beats/packetbeat/current/configuring-howto-packetbeat.html) documentation for Packetbeat.
+Checkout the
+[command line](https://www.elastic.co/guide/en/beats/packetbeat/current/command-line-options.html)
+and
+[configuration](https://www.elastic.co/guide/en/beats/packetbeat/current/configuring-howto-packetbeat.html)
+documentation for Packetbeat.
 
 
-See a sample Packetbeat configuration file included in this repository at [./config/packetbeat.yml](./config/packetbeat.yml)
+See a sample Packetbeat configuration file included in this repository
+at [./config/packetbeat.yml](./config/packetbeat.yml)
 
 Although we are using Packetbeat for testing our ELK stack it is a very
 useful utility for network monitoring or correlating network activity
 with other data for performance analysis and diagnostics.
 
-Packetbeat works great as is own [docker container](https://www.elastic.co/guide/en/beats/packetbeat/current/running-on-docker.html). You can
-optionally start one and live it running to get a good flow of stats
-into our new ELK stack.
+Packetbeat works great as is own
+[docker container](https://www.elastic.co/guide/en/beats/packetbeat/current/running-on-docker.html).
+You can optionally start one and live it running to get a good flow of
+stats into our new ELK stack.
 
 From the base of this repository run the following: (you need to be in
 base in order to mount the configuration file in
@@ -287,12 +298,18 @@ docker run -d --name packetbeat \
     docker.elastic.co/beats/packetbeat:6.2.2
 ```
 
+After Packbeat had been running for a few minutes you should see quite a
+few documents when inspecting node stats:
+
+`curl localhost:9200/_nodes/stats?pretty`
+
+
 #### Logstash ElasticSearch Configuration
 
 This repository contains a Logstash configuration file in
-./conf/logstash.conf. The following config sets beats as an input
-and elastic search as output. We do not need filters at this point
-since beats already sends our data in a useful format for Elasticsearch.
+./conf/logstash.conf. The following config sets beats as an input and
+elastic search as output. We do not need filters at this point since
+beats already sends our data in a useful format for Elasticsearch.
 
 ```plain
 input {
@@ -319,3 +336,24 @@ docker run -d -it --name=logstash \
     -v $(pwd)/conf/logstash.conf:/usr/share/logstash/pipeline/logstash.conf \
     docker.elastic.co/logstash/logstash-oss:6.2.2
 ```
+
+#### Kibana
+
+To visualize our data in Elasticsearch we can run a
+[Kibana docker container](https://www.elastic.co/guide/en/kibana/6.2/docker.html)
+
+```bash
+docker run -d --name kibana \
+    --net elknet \
+    -p 5601:5601 \
+    docker.elastic.co/kibana/kibana-oss:6.2.2
+```
+
+Browse to http://localhost:5601/
+
+
+[1] https://www.vagrantup.com/ [2] https://www.virtualbox.org/ [3]
+https://www.elastic.co/guide/en/elasticsearch/reference/6.2/docker.html
+[4] https://www.elastic.co/guide/en/logstash/6.2/docker.html [5]
+https://www.elastic.co/guide/en/kibana/6.2/docker.html [6]
+https://www.elastic.co/guide/en/beats/packetbeat/6.2/running-on-docker.html
