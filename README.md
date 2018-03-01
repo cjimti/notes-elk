@@ -352,8 +352,10 @@ docker run -d --name kibana \
 Browse to http://localhost:5601/
 
 
-[1] https://www.vagrantup.com/ [2] https://www.virtualbox.org/ [3]
+[1]: https://www.vagrantup.com/
+[2]: https://www.virtualbox.org/
+[3]:
 https://www.elastic.co/guide/en/elasticsearch/reference/6.2/docker.html
-[4] https://www.elastic.co/guide/en/logstash/6.2/docker.html [5]
-https://www.elastic.co/guide/en/kibana/6.2/docker.html [6]
-https://www.elastic.co/guide/en/beats/packetbeat/6.2/running-on-docker.html
+[4]: https://www.elastic.co/guide/en/logstash/6.2/docker.html
+[5]: https://www.elastic.co/guide/en/kibana/6.2/docker.html
+[6]: https://www.elastic.co/guide/en/beats/packetbeat/6.2/running-on-docker.html
